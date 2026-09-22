@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marzio & Simona — Invito</title>
+
+<!--
+  ============================================================
+  COME PERSONALIZZARE QUESTA PAGINA
+  ============================================================
+  Tutte le informazioni del matrimonio si trovano nell'oggetto
+  DATI qui sotto, nel tag <script> in fondo alla pagina.
+  Cerca "MODIFICA QUI" per trovarlo velocemente e sostituisci
+  i valori segnaposto con quelli reali.
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#2E3A2C;
+    --ink-soft:#4a5847;
+    --paper:#F7F2E7;
+    --paper-dark:#ECE3CE;
+    --gold:#A9812D;
+    --gold-soft:#c9a765;
+    --wax:#8B3A3A;
+    --wax-dark:#6e2c2c;
+    --sage:#7C8B6F;
+    --serif: 'Cormorant Garamond', serif;
+    --sans: 'Jost', sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background:var(--paper-dark);
+    color:var(--ink);
+    font-family:var(--sans);
+    overflow-x:hidden;
+  }
+
+  body{
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  /* ---------- background texture ---------- */
+  .bg-field{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(169,129,45,0.08), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(124,139,111,0.12), transparent 55%),
+      var(--paper-dark);
+  }
+
+  /* ============================================================
+     SCHERMATA 1 — BUSTA
+     ============================================================ */
+  .stage{
+    position:relative;
+    z-index:1;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+  }
+
+  .envelope-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:28px;
+    transition:opacity .6s ease, transform .6s ease;
+  }
+
+  .envelope-wrap.hide{
+    opacity:0;
+    transform:scale(.92);
+    pointer-events:none;
+  }
+
+  .sprig{
+    width:120px;
+    height:auto;
+    opacity:.75;
+  }
+
+  .envelope-scene{
+    width:min(78vw, 340px);
+    aspect-ratio: 3 / 2.05;
+    position:relative;
+    perspective:1400px;
+    cursor:pointer;
+  }
+
+  .envelope-scene:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:6px;
+  }
+
+  .env-shadow{
+    position:absolute;
+    left:6%; right:6%; bottom:-14px;
+    height:22px;
+    background:radial-gradient(ellipse at center, rgba(46,58,44,0.28), transparent 70%);
+    filter:blur(2px);
+  }
+
+  .env-body{
+    position:absolute;
+    inset:0;
+    background:var(--paper);
+    border:1px solid rgba(169,129,45,0.35);
+    box-shadow: 0 18px 40px -18px rgba(46,58,44,0.45);
+  }
+
+  .env-body::before{ /* left triangle fold, drawn for texture */
+    content:"";
+    position:absolute; inset:0;
+    background:
+      linear-gradient(135deg, rgba(46,58,44,0.05) 0%, transparent 40%),
+      linear-gradient(-45deg, rgba(46,58,44,0.05) 0%, transparent 40%);
+  }
+
+  .env-inner-shadow{
+    position:absolute;
+    inset:0;
+    box-shadow: inset 0 0 22px rgba(46,58,44,0.10);
+  }
+
+  .card-peek{
+    position:absolute;
+    left:8%; right:8%;
+    top:-6%;
+    height:78%;
+    background:var(--paper);
+    border:1px solid rgba(169,129,45,0.3);
+    box-shadow:0 6px 18px -8px rgba(46,58,44,0.25);
+    transform:translateY(0%);
+    transition: transform 1.1s cubic-bezier(.22,.9,.24,1), opacity .6s ease;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:6% 10%;
+  }
+
+  .card-peek .peek-text{
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:clamp(.7rem, 2.4vw, .95rem);
+    line-height:1.5;
+    opacity:.85;
+  }
+
+  .flap{
+    position:absolute;
+    left:0; right:0; top:0;
+    height:58%;
+    background:var(--paper-dark);
+    clip-path: polygon(0 0, 100% 0, 50% 92%);
+    transform-origin: top center;
+    transform: rotateX(0deg);
+    transition: transform 1s cubic-bezier(.5,0,.2,1);
+    z-index:3;
+    border-bottom:1px solid rgba(169,129,45,0.25);
+  }
+
+  .flap::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(46,58,44,0.06), transparent 60%);
+  }
+
+  .seal{
+    position:absolute;
+    left:50%; top:44%;
+    width:56px; height:56px;
+    margin-left:-28px; margin-top:-28px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--wax) 0%, var(--wax-dark) 70%);
+    box-shadow:0 3px 8px rgba(0,0,0,0.35), inset 0 -3px 6px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.15);
+    z-index:4;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: transform .5s ease .05s, opacity .45s ease .05s;
+  }
+
+  .seal span{
+    font-family:var(--serif);
+    color:#efe0c9;
+    font-size:1.15rem;
+    letter-spacing:1px;
+    transform:translateY(-1px);
+  }
+
+  .front-bottom{
+    position:absolute;
+    left:0; right:0; bottom:0; top:42%;
+    background:var(--paper);
+    clip-path: polygon(0 100%, 0 12%, 50% 62%, 100% 12%, 100% 100%);
+    z-index:2;
+  }
+
+  .prompt{
+    font-family:var(--sans);
+    font-weight:400;
+    letter-spacing:.14em;
+    font-size:.78rem;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  .prompt small{
+    display:block;
+    margin-top:4px;
+    font-family:var(--serif);
+    font-style:italic;
+    letter-spacing:0;
+    font-size:1rem;
+    color:var(--gold);
+  }
+
+  /* opened state */
+  .envelope-scene.open .flap{
+    transform: rotateX(178deg);
+  }
+  .envelope-scene.open .seal{
+    transform: scale(0.4) rotate(12deg);
+    opacity:0;
+  }
+  .envelope-scene.open .card-peek{
+    transform: translateY(-165%) scale(1.04);
+  }
+
+  /* ============================================================
+     SCHERMATA 2 — INVITO
+     ============================================================ */
+  .invite{
+    position:relative;
+    z-index:1;
+    max-width:640px;
+    margin:0 auto;
+    padding: 64px 24px 100px;
+    opacity:0;
+    transform:translateY(24px);
+    pointer-events:none;
+    transition:opacity .9s ease, transform .9s ease;
+  }
+
+  .invite.show{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+
+  .invite-card{
+    background:var(--paper);
+    border:1px solid rgba(169,129,45,0.3);
+    box-shadow:0 30px 60px -30px rgba(46,58,44,0.35);
+    padding: 56px 32px 48px;
+    text-align:center;
+  }
+
+  .sprig-top{ width:150px; margin:0 auto 8px; display:block; }
+  .sprig-bottom{ width:150px; margin:24px auto 0; display:block; transform:scaleY(-1); }
+
+  .eyebrow-note{
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:1.05rem;
+    line-height:1.6;
+    max-width:34ch;
+    margin:0 auto 30px;
+  }
+
+  .names{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(2.4rem, 9vw, 3.4rem);
+    line-height:1.05;
+    color:var(--ink);
+    margin:0;
+  }
+
+  .amp{
+    display:block;
+    font-style:italic;
+    color:var(--gold);
+    font-size:0.55em;
+    margin:6px 0;
+  }
+
+  .hr{
+    width:64px;
+    height:1px;
+    background:var(--gold-soft);
+    margin:28px auto;
+    border:none;
+  }
+
+  .date-line{
+    font-family:var(--sans);
+    letter-spacing:.08em;
+    font-size:1.05rem;
+    color:var(--ink);
+  }
+
+  .date-line strong{
+    display:block;
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:1.7rem;
+    letter-spacing:0;
+    margin-top:4px;
+    color:var(--wax-dark);
+  }
+
+  .details{
+    margin-top:44px;
+    display:flex;
+    flex-direction:column;
+    gap:26px;
+    text-align:left;
+  }
+
+  .detail-row{
+    display:grid;
+    grid-template-columns:96px 1fr;
+    gap:14px;
+    align-items:start;
+    border-top:1px solid rgba(169,129,45,0.22);
+    padding-top:18px;
+  }
+
+  .detail-label{
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--gold);
+    font-size:1.05rem;
+    padding-top:1px;
+  }
+
+  .detail-body strong{
+    display:block;
+    font-family:var(--sans);
+    font-weight:500;
+    color:var(--ink);
+    font-size:1rem;
+    margin-bottom:3px;
+  }
+
+  .detail-body span{
+    display:block;
+    font-family:var(--sans);
+    font-weight:300;
+    color:var(--ink-soft);
+    font-size:.94rem;
+    line-height:1.5;
+  }
+
+  .message{
+    margin-top:40px;
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:1.15rem;
+    line-height:1.7;
+  }
+
+  .rsvp{
+    margin-top:40px;
+    padding-top:32px;
+    border-top:1px solid rgba(169,129,45,0.22);
+  }
+
+  .rsvp-label{
+    font-family:var(--sans);
+    letter-spacing:.06em;
+    font-size:.85rem;
+    color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+
+  .rsvp-button{
+    display:inline-block;
+    font-family:var(--sans);
+    font-weight:500;
+    font-size:.92rem;
+    letter-spacing:.03em;
+    color:var(--paper);
+    background:var(--ink);
+    padding:14px 34px;
+    text-decoration:none;
+    transition:background .25s ease, transform .25s ease;
+  }
+
+  .rsvp-button:hover{
+    background:var(--wax-dark);
+    transform:translateY(-1px);
+  }
+
+  .rsvp-deadline{
+    margin-top:14px;
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:.82rem;
+    color:var(--ink-soft);
+  }
+
+  footer.credit{
+    text-align:center;
+    font-family:var(--sans);
+    font-size:.72rem;
+    color:var(--ink-soft);
+    opacity:.6;
+    margin-top:36px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .flap, .seal, .card-peek, .envelope-wrap, .invite{
+      transition:none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-field" aria-hidden="true"></div>
+
+<!-- ===================== SCHERMATA 1: BUSTA ===================== -->
+<div class="stage" id="stage">
+  <div class="envelope-wrap" id="envelopeWrap">
+
+    <svg class="sprig" viewBox="0 0 200 60" aria-hidden="true">
+      <path d="M100 30 C70 10, 40 20, 15 8" fill="none" stroke="#7C8B6F" stroke-width="1.4"/>
+      <path d="M100 30 C130 10, 160 20, 185 8" fill="none" stroke="#7C8B6F" stroke-width="1.4"/>
+      <ellipse cx="35" cy="12" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(-20 35 12)"/>
+      <ellipse cx="55" cy="22" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(-8 55 22)"/>
+      <ellipse cx="165" cy="12" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(20 165 12)"/>
+      <ellipse cx="145" cy="22" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(8 145 22)"/>
+      <circle cx="100" cy="34" r="3" fill="#A9812D"/>
+    </svg>
+
+    <div class="envelope-scene" id="envelopeScene" role="button" tabindex="0"
+         aria-label="Apri la busta per vedere l'invito">
+      <div class="env-shadow"></div>
+      <div class="card-peek">
+        <div class="peek-text">Marzio<br>&amp;<br>Simona<br><span style="font-size:.75em;">si sposano</span></div>
+      </div>
+      <div class="env-body">
+        <div class="env-inner-shadow"></div>
+      </div>
+      <div class="front-bottom"></div>
+      <div class="flap"></div>
+      <div class="seal"><span>M·S</span></div>
+    </div>
+
+    <p class="prompt">Tocca la busta<small>per aprire l'invito</small></p>
+  </div>
+</div>
+
+<!-- ===================== SCHERMATA 2: INVITO ===================== -->
+<div class="invite" id="invite">
+  <div class="invite-card">
+
+    <svg class="sprig-top" viewBox="0 0 200 60" aria-hidden="true">
+      <path d="M100 30 C70 10, 40 20, 15 8" fill="none" stroke="#7C8B6F" stroke-width="1.4"/>
+      <path d="M100 30 C130 10, 160 20, 185 8" fill="none" stroke="#7C8B6F" stroke-width="1.4"/>
+      <ellipse cx="35" cy="12" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(-20 35 12)"/>
+      <ellipse cx="55" cy="22" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(-8 55 22)"/>
+      <ellipse cx="165" cy="12" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(20 165 12)"/>
+      <ellipse cx="145" cy="22" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(8 145 22)"/>
+      <circle cx="100" cy="34" r="3" fill="#A9812D"/>
+    </svg>
+
+    <p class="eyebrow-note" id="eyebrowNote"></p>
+
+    <h1 class="names">
+      <span id="nameOne"></span>
+      <span class="amp">&amp;</span>
+      <span id="nameTwo"></span>
+    </h1>
+
+    <hr class="hr">
+
+    <p class="date-line" id="dateLine"></p>
+
+    <div class="details" id="detailsList"></div>
+
+    <p class="message" id="messageText"></p>
+
+    <div class="rsvp">
+      <p class="rsvp-label" id="rsvpLabel"></p>
+      <a class="rsvp-button" id="rsvpButton" href="#">Conferma la tua presenza</a>
+      <p class="rsvp-deadline" id="rsvpDeadline"></p>
+    </div>
+
+    <svg class="sprig-bottom" viewBox="0 0 200 60" aria-hidden="true">
+      <path d="M100 30 C70 10, 40 20, 15 8" fill="none" stroke="#7C8B6F" stroke-width="1.4"/>
+      <path d="M100 30 C130 10, 160 20, 185 8" fill="none" stroke="#7C8B6F" stroke-width="1.4"/>
+      <ellipse cx="35" cy="12" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(-20 35 12)"/>
+      <ellipse cx="55" cy="22" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(-8 55 22)"/>
+      <ellipse cx="165" cy="12" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(20 165 12)"/>
+      <ellipse cx="145" cy="22" rx="7" ry="3.2" fill="#7C8B6F" opacity=".8" transform="rotate(8 145 22)"/>
+      <circle cx="100" cy="34" r="3" fill="#A9812D"/>
+    </svg>
+
+  </div>
+
+  <footer class="credit">Con affetto, Marzio &amp; Simona</footer>
+</div>
+
+<script>
+/* ============================================================
+   DATI DEL MATRIMONIO — MODIFICA QUI
+   Sostituisci i valori segnaposto con le informazioni reali.
+   ============================================================ */
+const DATI = {
+  nomeUno: "Marzio",
+  nomeDue: "Simona",
+
+  frasetta: "Ci sposiamo, e vorremmo che il giorno più bello della nostra vita lo condivideste con noi.",
+
+  // Formato libero: comparirà così com'è
+  dataGrande: "12 Giugno 2027",
+  dataPiccola: "Sabato",
+
+  dettagli: [
+    {
+      label: "Cerimonia",
+      titolo: "Ore 16:30 — Chiesa di San Placeholder",
+      testo: "Via Roma 1, Cittadina (Provincia)"
+    },
+    {
+      label: "Ricevimento",
+      titolo: "A seguire — Villa Placeholder",
+      testo: "Via delle Rose 10, Cittadina (Provincia)"
+    },
+    {
+      label: "Dress code",
+      titolo: "Elegante campestre",
+      testo: "Toni caldi e naturali sono benvenuti, evitate il bianco"
+    }
+  ],
+
+  messaggio: "«L'amore non guarda con gli occhi, ma con l'anima.» Non vediamo l'ora di festeggiare con voi.",
+
+  rsvpEtichetta: "Fateci sapere se ci sarete",
+  rsvpEmail: "marzio.e.simona@example.com",
+  rsvpOggetto: "Conferma presenza - Matrimonio Marzio e Simona",
+  rsvpScadenza: "Vi chiediamo gentilmente di rispondere entro il 1 Maggio 2027"
+};
+/* ============================================================
+   Fine dati modificabili — sotto c'è solo la logica della pagina
+   ============================================================ */
+
+document.getElementById('nameOne').textContent = DATI.nomeUno;
+document.getElementById('nameTwo').textContent = DATI.nomeDue;
+document.getElementById('eyebrowNote').textContent = DATI.frasetta;
+document.getElementById('dateLine').innerHTML = DATI.dataPiccola + '<strong>' + DATI.dataGrande + '</strong>';
+document.getElementById('messageText').textContent = DATI.messaggio;
+document.getElementById('rsvpLabel').textContent = DATI.rsvpEtichetta;
+document.getElementById('rsvpDeadline').textContent = DATI.rsvpScadenza;
+document.getElementById('rsvpButton').href =
+  'mailto:' + DATI.rsvpEmail + '?subject=' + encodeURIComponent(DATI.rsvpOggetto);
+
+const detailsList = document.getElementById('detailsList');
+DATI.dettagli.forEach(function(d){
+  const row = document.createElement('div');
+  row.className = 'detail-row';
+  row.innerHTML =
+    '<div class="detail-label">' + d.label + '</div>' +
+    '<div class="detail-body"><strong>' + d.titolo + '</strong><span>' + d.testo + '</span></div>';
+  detailsList.appendChild(row);
+});
+
+document.title = DATI.nomeUno + ' & ' + DATI.nomeDue + ' — Invito';
+
+/* ---------------- interazione busta ---------------- */
+const scene = document.getElementById('envelopeScene');
+const wrap = document.getElementById('envelopeWrap');
+const invite = document.getElementById('invite');
+let opened = false;
+
+function openInvite(){
+  if(opened) return;
+  opened = true;
+  scene.classList.add('open');
+
+  setTimeout(function(){
+    wrap.classList.add('hide');
+  }, 650);
+
+  setTimeout(function(){
+    invite.classList.add('show');
+    invite.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 900);
+}
+
+scene.addEventListener('click', openInvite);
+scene.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' || e.key === ' '){
+    e.preventDefault();
+    openInvite();
+  }
+});
+</script>
+
+</body>
+</html>
