@@ -424,6 +424,20 @@
     color:var(--ink-soft);
   }
 
+  .rsvp-alt{
+    margin-top:14px;
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:.82rem;
+    color:var(--ink-soft);
+  }
+
+  .rsvp-alt a{
+    color:var(--gold);
+    text-decoration:none;
+    border-bottom:1px solid var(--gold-soft);
+  }
+
   footer.credit{
     text-align:center;
     font-family:var(--sans);
@@ -508,7 +522,8 @@
 
     <div class="rsvp">
       <p class="rsvp-label" id="rsvpLabel"></p>
-      <a class="rsvp-button" id="rsvpButton" href="#">Conferma la tua presenza</a>
+      <a class="rsvp-button" id="rsvpButton" href="#" target="_blank" rel="noopener">Conferma su WhatsApp</a>
+      <p class="rsvp-alt">oppure <a id="rsvpEmailLink" href="#">scrivici una email</a></p>
       <p class="rsvp-deadline" id="rsvpDeadline"></p>
     </div>
 
@@ -563,8 +578,16 @@ const DATI = {
   messaggio: "«L'amore non guarda con gli occhi, ma con l'anima.» Non vediamo l'ora di festeggiare con voi.",
 
   rsvpEtichetta: "Fateci sapere se ci sarete",
+
+  // Numero WhatsApp in formato internazionale, senza spazi né "+" né "00"
+  // Esempio Italia: cellulare 333 1234567 -> "393331234567"
+  rsvpWhatsapp: "393331234567",
+  rsvpMessaggioWhatsapp: "Ciao! Confermo con piacere la mia presenza al matrimonio di Marzio e Simona 🤍",
+
+  // Email lasciata come alternativa secondaria
   rsvpEmail: "marzio.e.simona@example.com",
   rsvpOggetto: "Conferma presenza - Matrimonio Marzio e Simona",
+
   rsvpScadenza: "Vi chiediamo gentilmente di rispondere entro il 1 Maggio 2027"
 };
 /* ============================================================
@@ -579,6 +602,9 @@ document.getElementById('messageText').textContent = DATI.messaggio;
 document.getElementById('rsvpLabel').textContent = DATI.rsvpEtichetta;
 document.getElementById('rsvpDeadline').textContent = DATI.rsvpScadenza;
 document.getElementById('rsvpButton').href =
+  'https://wa.me/' + DATI.rsvpWhatsapp + '?text=' + encodeURIComponent(DATI.rsvpMessaggioWhatsapp);
+
+document.getElementById('rsvpEmailLink').href =
   'mailto:' + DATI.rsvpEmail + '?subject=' + encodeURIComponent(DATI.rsvpOggetto);
 
 const detailsList = document.getElementById('detailsList');
